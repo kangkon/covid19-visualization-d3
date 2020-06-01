@@ -253,7 +253,7 @@ export default withResizeDetector(({width}) => {
   return (
       <>
           <Helmet>
-
+              <title>Covid19 Cases Visualization - Assam</title>
               <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
 
           </Helmet>
@@ -270,7 +270,14 @@ export default withResizeDetector(({width}) => {
                           }}
                           geojson={geojson}
                           width={width}/>
-                      : <p style={{textAlign: 'center'}}>Loading...</p>
+                      : <div style={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                          <div>
+                              <div className="spinner-grow text-success" role="status">
+                                  <span className="sr-only">Loading Map, please wait...</span>
+                              </div>
+                              <div>Loading Map, please wait...<br/><span style={{color: '#afafaf'}}>Itech Computer</span></div>
+                          </div>
+                      </div>
               }
 
           </div>
