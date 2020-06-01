@@ -1,0 +1,233 @@
+[
+ {
+   "District": "Kamrup Metro",
+   "Confirmed": 316,
+   "Active": 232,
+   "Recovered": 78,
+   "Deceased": 3
+ },
+ {
+   "District": "Golaghat",
+   "Confirmed": 177,
+   "Active": 168,
+   "Recovered": 9,
+   "Deceased": 0
+ },
+ {
+   "District": "Kamrup",
+   "Confirmed": 67,
+   "Active": 66,
+   "Recovered": 1,
+   "Deceased": 0
+ },
+ {
+   "District": "Cachar",
+   "Confirmed": 59,
+   "Active": 29,
+   "Recovered": 30,
+   "Deceased": 0
+ },
+ {
+   "District": "Hojai",
+   "Confirmed": 55,
+   "Active": 55,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Kokrajhar",
+   "Confirmed": 41,
+   "Active": 41,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Karimganj",
+   "Confirmed": 41,
+   "Active": 39,
+   "Recovered": 2,
+   "Deceased": 0
+ },
+ {
+   "District": "Nagaon",
+   "Confirmed": 34,
+   "Active": 34,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Hailakandi",
+   "Confirmed": 34,
+   "Active": 33,
+   "Recovered": 0,
+   "Deceased": 1
+ },
+ {
+   "District": "Chirang",
+   "Confirmed": 32,
+   "Active": 32,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Lakhimpur",
+   "Confirmed": 30,
+   "Active": 29,
+   "Recovered": 1,
+   "Deceased": 0
+ },
+ {
+   "District": "Dhubri",
+   "Confirmed": 29,
+   "Active": 24,
+   "Recovered": 5,
+   "Deceased": 0
+ },
+ {
+   "District": "Goalpara",
+   "Confirmed": 27,
+   "Active": 23,
+   "Recovered": 4,
+   "Deceased": 0
+ },
+ {
+   "District": "Tinsukia",
+   "Confirmed": 26,
+   "Active": 26,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Morigaon",
+   "Confirmed": 26,
+   "Active": 20,
+   "Recovered": 6,
+   "Deceased": 0
+ },
+ {
+   "District": "Jorhat",
+   "Confirmed": 21,
+   "Active": 12,
+   "Recovered": 9,
+   "Deceased": 0
+ },
+ {
+   "District": "Nalbari",
+   "Confirmed": 20,
+   "Active": 16,
+   "Recovered": 4,
+   "Deceased": 0
+ },
+ {
+   "District": "Barpeta",
+   "Confirmed": 19,
+   "Active": 11,
+   "Recovered": 8,
+   "Deceased": 0
+ },
+ {
+   "District": "Dibrugarh",
+   "Confirmed": 18,
+   "Active": 18,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Sonitpur",
+   "Confirmed": 14,
+   "Active": 14,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Biswanath",
+   "Confirmed": 13,
+   "Active": 13,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Sivasagar",
+   "Confirmed": 13,
+   "Active": 13,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Udalguri",
+   "Confirmed": 12,
+   "Active": 12,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Dhemaji",
+   "Confirmed": 12,
+   "Active": 12,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Darrang",
+   "Confirmed": 10,
+   "Active": 10,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Charaideo",
+   "Confirmed": 9,
+   "Active": 9,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Karbi Anglong",
+   "Confirmed": 8,
+   "Active": 8,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Dima Hasao",
+   "Confirmed": 8,
+   "Active": 8,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Bongaigaon",
+   "Confirmed": 6,
+   "Active": 1,
+   "Recovered": 5,
+   "Deceased": 0
+ },
+ {
+   "District": "West Karbi Anglong",
+   "Confirmed": 4,
+   "Active": 4,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "South Salmara Mankachar",
+   "Confirmed": 4,
+   "Active": 3,
+   "Recovered": 1,
+   "Deceased": 0
+ },
+ {
+   "District": "Majuli",
+   "Confirmed": 0,
+   "Active": 0,
+   "Recovered": 0,
+   "Deceased": 0
+ },
+ {
+   "District": "Baksa",
+   "Confirmed": 0,
+   "Active": 0,
+   "Recovered": 0,
+   "Deceased": 0
+ }
+]
