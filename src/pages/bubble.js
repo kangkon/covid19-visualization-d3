@@ -5,74 +5,58 @@ import {Helmet} from "react-helmet";
 //import slugify from 'slugify'
 const MapComponent = ({width, covid_data, aggregated, geojson}) => {
     width = width - 100
-    //const svgRef = useRef()
     const height = 450;
-    const legendWidth = 200, legendHeight = 10;
-    //const [selectedFeature, setSelected] = useState(null);
-
-    const [status, setStatus] = useState('Confirmed')
-
-    //const center_cord = [26.292008, 92.934619];
+    const [status, setStatus] = useState('Confirmed');
     //Map
     const projection =  d3.geoMercator().fitSize([width, height], geojson).precision(100);
-    //const projection =  d3.geoAlbers().fitSize([width, height], selectedFeature || geojson).precision(100);
-    //.center(center_cord).scale(10).translate([width/2, height/2]);
-
     const pathBuilder = d3.geoPath().projection(projection).pointRadius(2);
-
-    const drawLegend = (_status, colorScale) => {
-        //Redraw Legend
-        const  extent = d3.extent(geojson.features, f => f[_status]);
-        const ledgendScale = d3.scaleLinear()
-            .range([0, legendWidth])
-            .domain(extent);
-        const legendTicks = d3.scaleLinear().domain(extent).ticks(6);
-        const legendAxis = d3.axisBottom(ledgendScale)
-            .tickSize(legendHeight)
-            .tickValues([0, ...legendTicks, extent[1]]);
-
-        d3.select('.legend').remove();
-
-        const legend_g = d3.select("svg").append("g")
-            .attr('class', 'legend')
-            .attr("transform", `translate(15, ${height - 50})`);
-
-        const defs = legend_g.append("defs");
-        const linearGradient = defs.append("linearGradient").attr("id", "myGradient");
-        linearGradient.selectAll("stop")
-            .data([0, ...legendTicks])
-            .enter().append("stop")
-            .attr("offset", f => ((f - extent[0]) / (extent[1] - extent[0]) * 100) + "%")
-            .attr("stop-color", f => colorScale(f));
-
-
-        legend_g.append("rect")
-            .attr("width", legendWidth)
-            .attr("height", legendHeight)
-            .style("fill", "url(#myGradient)");
-
-        legend_g.append("g")
-            .call(legendAxis)
-            .select(".domain").remove();
-    }
 
     const updateMap = (_status) => {
 
         const min_val = d3.min(covid_data, d => d[_status]);
         const max_val = d3.max(covid_data, d => d[_status]);
 
-        const colorScale = d3.scaleLinear().domain([min_val, max_val]).range(["#f7fcf5", "#E31A1C"]);
+        //const colorScale = d3.scaleLinear().domain([min_val, max_val]).range(["#f7fcf5", "#E31A1C"]);
         //const colorScale = d3.scaleQuantize([min_val, max_val], d3.schemeReds[9])
 
-        //const fontSizeScale = d3.scaleLinear().domain([min_val, max_val]).range([11, 22]);
-        //const fontColorScale = d3.scaleLinear().domain([min_val, max_val]).range(["#08306b", "#08306b"]);
+        const radiScale = d3.scaleLinear().domain([min_val, max_val]).range([10, 40]);
 
-        d3.selectAll('.district')
+        //console.log(geojson.features.filter(f => f[_status] > 0))
+        const circle = d3.select('svg').select(".bubbles");
+        const toolTip = d3.select(".data-tooltip");
+        circle.empty(); //Remove circles
+        circle.selectAll('circle').data(geojson.features.filter(f => f[_status] > 0))
+            .join("circle")
+            .attr("r",0)
+            .attr("cx", f => pathBuilder.centroid(f)[0])
+            .attr("cy", f => pathBuilder.centroid(f)[1])
+            .attr("fill", "#E31A1C")
+            .on('mouseenter', function () {
+                toolTip.style("display", null)
+            })
+            .on('mouseleave', function () {
+                toolTip.style("display", "none")
+            })
+            .on('mousemove', function(f) {
+                let xPos = d3.mouse(this)[0] + 10;
+                let yPos = d3.mouse(this)[1] + 10;
+                //Check if exceed margin
+                if(xPos + 150 > width - 100)
+                    xPos = xPos - 150 - 20;
+
+                if(yPos + 145 > height - 100)
+                    yPos = yPos - 145 - 20;
+                toolTip.attr("transform", `translate(${xPos}, ${yPos})`);
+                toolTip.select('.value-district').text(`${f.properties.DISTRICT}`)
+                toolTip.select('.value-confirmed').text(`${f.Confirmed}`);
+                toolTip.select('.value-active').text(`${f.Active}`);
+                toolTip.select('.value-recovered').text(`${f.Recovered}`);
+                toolTip.select('.value-deceased').text(`${f.Deceased}`);
+            })
             .transition()
             .duration(500)
-            .attr("fill", feature => colorScale(feature[_status]));
+            .attr("r", f => radiScale(f[_status]));
 
-        drawLegend(_status, colorScale);
 
     }
 
@@ -83,10 +67,10 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
         const min_val = d3.min(covid_data, d => d[status]);
         const max_val = d3.max(covid_data, d => d[status]);
 
-        const colorScale = d3.scaleLinear().domain([min_val, max_val]).range(["#f7fcf5", "#E31A1C"]);
-        //const colorScale = d3.scaleQuantize([min_val, max_val], d3.schemeReds[9])
+        const colorScale = d3.scaleLinear().domain([min_val, max_val]).range(["#FFA555", "#E31A1C"]);
+        const radiScale = d3.scaleLinear().domain([min_val, max_val]).range([10, 40]);
 
-        const fontSizeScale = d3.scaleLinear().domain([min_val, max_val]).range([11, 22]);
+        //const fontSizeScale = d3.scaleLinear().domain([min_val, max_val]).range([11, 22]);
         const fontColorScale = d3.scaleLinear().domain([min_val, max_val]).range(["#08306b", "#08306b"]);
 
 
@@ -95,15 +79,48 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
         //const state_group = svg.append("g")
 
         /*
-        .on("click", feature => {
-            setSelected(selectedFeature === feature ? null : feature)
-        })
         .transition()
         .duration(1000)
          */
         svg.selectAll('.district')
             .data(geojson.features)
             .join('path')
+            .attr("fill", "#f4f4f4")
+            .transition()
+            .duration(1000)
+            .attr('class', 'district-plain')
+            .attr("fill", "#f7fcf5")
+            .attr("d", (feature) => {
+                //console.log(feature)
+                return pathBuilder({
+                    ...feature,
+                    fill: colorScale(feature[status])
+                });
+            })
+
+
+        svg.append('g')
+            .attr('class', 'place-labels')
+            .selectAll('.place-label')
+            .data(geojson.features)
+            .join("text")
+            .attr("class", "place-label")
+            .attr("transform", function(f) { return "translate(" + pathBuilder.centroid(f) + ")"; })
+            .text(f => f.properties.DISTRICT)
+            .style("text-anchor", "middle")
+            .attr('fill', f => fontColorScale(f[status]))
+        //.attr('font-size', f => fontSizeScale(f[status]))
+
+        svg.append('g')
+            .attr('class', 'bubbles')
+            .selectAll('.bubbles')
+            .data(geojson.features.filter(f => f[status] > 0))
+            .join("circle")
+            .attr("cx", f => pathBuilder.centroid(f)[0] )
+            .attr("cy", f => pathBuilder.centroid(f)[1] )
+            //.attr("transform", function(f) { return "translate(" + pathBuilder.centroid(f) + ")"; })
+            .attr('r', f => f[status] > 0 ? radiScale(f[status]) : 0)
+            .attr('fill', "#E31A1C")
             .on('mouseenter', function () {
                 toolTip.style("display", null)
             })
@@ -126,48 +143,23 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
                 recovered_value.text(`${f.Recovered}`);
                 deceased_value.text(`${f.Deceased}`);
             })
-            .attr("fill", "#f4f4f4")
-            .transition()
-            .duration(1000)
-            .attr('class', 'district')
-            .attr("fill", feature => colorScale(feature[status]))
-            .attr("d", (feature) => {
-                //console.log(feature)
-                return pathBuilder({
-                    ...feature,
-                    fill: colorScale(feature[status])
-                });
-            })
-
-
-        svg.append('g')
-            .attr('class', 'place-labels')
-            .selectAll('.place-label')
-            .data(geojson.features)
-            .join("text")
-            .attr("class", "place-label")
-            .attr("transform", function(f) { return "translate(" + pathBuilder.centroid(f) + ")"; })
-            .text(f => f.properties.DISTRICT)
-            .style("text-anchor", "middle")
-            .attr('fill', f => fontColorScale(f[status]))
-            //.attr('font-size', f => fontSizeScale(f[status]))
-
-
-        drawLegend(status, colorScale)
 
         //Tooltip Start
         const toolTip = svg.append("g")
+            .attr("class", "data-tooltip")
             .style("display", "none");
+
         const textBox = toolTip.append('rect')
-                .attr('width', 150)
-                .attr('height', 145)
-                .attr("fill", '#fff')
-                .style("fill-opacity", 0.8)
-                .attr("stroke", "#afafaf")
-                .attr("stroke-width", 2)
-                .attr("rx", 8);
+            .attr('width', 150)
+            .attr('height', 145)
+            .attr("fill", '#fff')
+            .style("fill-opacity", 0.8)
+            .attr("stroke", "#afafaf")
+            .attr("stroke-width", 2)
+            .attr("rx", 8);
 
         const district_line = toolTip.append('text')
+            .attr("class", "value-district")
             .attr("x", 10)
             .attr("y", 25)
             .attr("text-anchor", "start")
@@ -182,6 +174,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 
 
         const confirmed_value = line1.append('tspan')
+            .attr("class", "value-confirmed")
             .attr("text-anchor", "end")
             .attr("x", 140);
 
@@ -194,6 +187,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 
 
         const active_value = line2.append('tspan')
+            .attr("class", "value-active")
             .attr("text-anchor", "end")
             .attr("x", 140);
 
@@ -206,6 +200,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 
 
         const recovered_value = line3.append('tspan')
+            .attr("class", "value-recovered")
             .attr("text-anchor", "end")
             .attr("x", 140);
 
@@ -218,13 +213,11 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 
 
         const deceased_value = line4.append('tspan')
+            .attr("class", "value-deceased")
             .attr("text-anchor", "end")
             .attr("x", 140);
 
         //Tooltip End
-
-
-
 
     }, [width])
 
@@ -235,7 +228,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
     //console.log(covid_data_merged, status, "render=================================================")
     return (
         <div>
-            <div className={"mt-3 mb-1 d-flex justify-content-between align-items-top"}>
+            <div className={"mt-3 d-flex justify-content-between"}>
                 <div className={"btn-group btn-group-sm header-buttons"} role="group" aria-label="header-buttons ">
                     <button type="button" className={`btn ${status === 'Confirmed' ? "btn-primary" : "btn-light"}`} onClick={() => {toggleStatus('Confirmed')}}>Confirmed</button>
                     <button type="button" className={`btn ${status === 'Active' ? "btn-primary" : "btn-light"}`} onClick={() => {toggleStatus('Active')}}>Active</button>
@@ -245,27 +238,22 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 
                 <div>
                     <div className={"btn-group btn-group-sm header-buttons"} role="group" aria-label="header-buttons ">
-                        <a className={`btn btn-primary`} href={"/"}>Heatmap</a>
-                        <a type="button" className={`btn btn-light`} href={"/bubble"}>Bubbles</a>
+                        <a className={`btn btn-light`} href={"/"}>Heatmap</a>
+                        <a type="button" className={`btn btn-primary`} href={"/bubble"}>Bubbles</a>
                     </div>
                 </div>
             </div>
             <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
                 <div id={"mapbox"} style={{width, height}}>
-                    <svg width={width} height={height}></svg>
+                    <svg width={width} height={height} />
                 </div>
             </div>
 
 
-            <div className={"map-title d-flex align-items-center pt-3"}>
-                <div style={{marginRight: 10}}>
-                    <img src={"https://itechcom.net/static/media/now-logo.94cd8103.png"} style={{height: 60}}/>
-                </div>
-                <div>
-                    <small style={{color: "#afafaf"}}>Move your mouse above any place to view results</small>
-                    <h5 style={{color: "#6f6f6f", margin: 0, padding: 0}}>COVID19 Cases Visualization in Assam</h5>
-                    <small>Itech Computer - service@itechcom.net</small>
-                </div>
+            <div className={"map-title"}>
+                <small style={{color: "#afafaf"}}>Bubble Chart - Hover on bubble to see tooltip</small>
+                <h4 style={{color: "#6f6f6f", margin: 0, padding: 0}}>COVID19 Cases Visualization in Assam</h4>
+                <small>Itech Computer - service@itechcom.net</small>
             </div>
 
             <div className={"right-card"}>
@@ -327,41 +315,41 @@ export default withResizeDetector(({width}) => {
     }, [])
 
 
-  return (
-      <>
-          <Helmet>
-              <title>Covid19 Cases Visualization - Assam</title>
-              {
-                  /*
-                  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
-                  */
-              }
+    return (
+        <>
+            <Helmet>
+                <title>Covid19 Cases Visualization - Assam</title>
+                {
+                    /*
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
+                    */
+                }
 
-          </Helmet>
-          <div className={"container-fluid"}>
-              {
-                  width && geojson && covid_data ?
-                      <MapComponent
-                          covid_data={covid_data.data}
-                          aggregated={{
-                              confirmed: covid_data.confirmed,
-                              active: covid_data.active,
-                              recovered: covid_data.recovered,
-                              deceased: covid_data.deceased
-                          }}
-                          geojson={geojson}
-                          width={800}/>
-                      : <div style={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-                          <div>
-                              <div className="spinner-grow text-success" role="status">
-                                  <span className="sr-only">Loading Map, please wait...</span>
-                              </div>
-                              <div>Loading Map, please wait...<br/><span style={{color: '#afafaf'}}>Itech Computer</span></div>
-                          </div>
-                      </div>
-              }
+            </Helmet>
+            <div className={"container-fluid"}>
+                {
+                    width && geojson && covid_data ?
+                        <MapComponent
+                            covid_data={covid_data.data}
+                            aggregated={{
+                                confirmed: covid_data.confirmed,
+                                active: covid_data.active,
+                                recovered: covid_data.recovered,
+                                deceased: covid_data.deceased
+                            }}
+                            geojson={geojson}
+                            width={800}/>
+                        : <div style={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                            <div>
+                                <div className="spinner-grow text-success" role="status">
+                                    <span className="sr-only">Loading Map, please wait...</span>
+                                </div>
+                                <div>Loading Map, please wait...<br/><span style={{color: '#afafaf'}}>Itech Computer</span></div>
+                            </div>
+                        </div>
+                }
 
-          </div>
-      </>
-  )
+            </div>
+        </>
+    )
 })
