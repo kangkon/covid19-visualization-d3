@@ -35,7 +35,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 
         const legend_g = d3.select("svg").append("g")
             .attr('class', 'legend')
-            .attr("transform", `translate(15, ${height - 25})`);
+            .attr("transform", `translate(15, ${height - 50})`);
 
         const defs = legend_g.append("defs");
         const linearGradient = defs.append("linearGradient").attr("id", "myGradient");
@@ -205,7 +205,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 }
 
 export default withResizeDetector(({width}) => {
-
+    console.log(width)
     const [covid_data, setCovidData] = useState(null);
     const [geojson, setGeoJson] = useState(null);
 
@@ -273,7 +273,7 @@ export default withResizeDetector(({width}) => {
                               deceased: covid_data.deceased
                           }}
                           geojson={geojson}
-                          width={width}/>
+                          width={1350}/>
                       : <div style={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
                           <div>
                               <div className="spinner-grow text-success" role="status">

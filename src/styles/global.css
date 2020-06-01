@@ -1,3 +1,7 @@
+#mapbox {
+    overflow: hidden;
+    overflow-x: auto;
+}
 text.place-label {
     /*
     stroke-width:1px;
