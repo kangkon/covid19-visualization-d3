@@ -111,10 +111,10 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
                 tooltip.style("display", "none")
             })
             .on('mousemove', function(f) {
-                const xPos = d3.mouse(this)[0] - 15;
-                const yPos = d3.mouse(this)[1] - 20;
-                tooltip.style("left", `${xPos - 50}px`)
-                    .style("top", `${yPos - 50}px`)
+                const xPos = d3.mouse(this)[0];
+                const yPos = d3.mouse(this)[1];
+                tooltip.style("left", `${xPos}px`)
+                    .style("top", `${yPos}px`)
                     .html(`<p><strong>${f.properties.DISTRICT}</strong></p>
                             <p><span>Confirmed</span>${f.Confirmed}</p>
                             <p><span>Active</span>${f.Active}</p>
@@ -179,10 +179,13 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
                     <img src={"https://itechcom.net/static/media/now-logo.94cd8103.png"} style={{height: 50}}/>
                 </div>
             </div>
-            <div id={"mapbox"} style={{width: '100%', height}}>
-                <div className={"map-tooltip"}></div>
-                <svg width={width} height={height} />
+            <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+                <div id={"mapbox"} style={{width, height}}>
+                    <div className={"map-tooltip"}></div>
+                    <svg width={width} height={height} />
+                </div>
             </div>
+
 
             <div className={"map-title"}>
                 <small style={{color: "#afafaf"}}>Move your mouse above any place to view results</small>
@@ -205,7 +208,6 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
 }
 
 export default withResizeDetector(({width}) => {
-    console.log(width)
     const [covid_data, setCovidData] = useState(null);
     const [geojson, setGeoJson] = useState(null);
 
@@ -273,7 +275,7 @@ export default withResizeDetector(({width}) => {
                               deceased: covid_data.deceased
                           }}
                           geojson={geojson}
-                          width={1350}/>
+                          width={800}/>
                       : <div style={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
                           <div>
                               <div className="spinner-grow text-success" role="status">
