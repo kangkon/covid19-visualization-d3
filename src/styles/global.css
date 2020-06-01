@@ -5,7 +5,12 @@ text.place-label {
     stroke-linejoin:miter;
     stroke-opacity:1;
      */
+    font-size: 12px;
+    opacity: 0.9;
     user-select: none;
+}
+text:hover {
+    cursor: pointer;
 }
 .district {
     stroke: #fff;
@@ -31,7 +36,7 @@ button:focus {
     position: absolute;
     z-index: 1000;
     display: inline-block;
-    opacity: 0;
+    opacity: 0.9;
     font-size: 13px;
 }
 
@@ -40,4 +45,45 @@ button:focus {
     padding: 0;
     display: flex;
     justify-content: space-between;
+}
+
+.right-card {
+    width: 18rem;
+    position: absolute;
+    bottom: 25px;
+    right: 10px;
+}
+
+.map-title {
+    position: absolute;
+    bottom: 25px;
+    width: 50%
+}
+
+.header-buttons {
+
+}
+
+@media (max-width: 767.98px) {
+    .map-title {
+        position: relative;
+        margin-top: 15px;
+        width: 100%;
+    }
+    .right-card {
+        position: relative;
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    .header-buttons {
+        display: flex;
+        flex-direction: column;
+        width:100px;
+    }
+
+    text.place-label {
+        font-size: 10px !important;
+    }
+
 }

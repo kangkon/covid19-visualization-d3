@@ -7,6 +7,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
     width = width - 100
     //const svgRef = useRef()
     const height = 450;
+    const legendWidth = 200, legendHeight = 10;
     //const [selectedFeature, setSelected] = useState(null);
 
     const [status, setStatus] = useState('Confirmed')
@@ -18,6 +19,42 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
     //.center(center_cord).scale(10).translate([width/2, height/2]);
 
     const pathBuilder = d3.geoPath().projection(projection).pointRadius(2);
+
+    const drawLegend = (_status, colorScale) => {
+        //Redraw Legend
+        const  extent = d3.extent(geojson.features, f => f[_status]);
+        const ledgendScale = d3.scaleLinear()
+            .range([0, legendWidth])
+            .domain(extent);
+        const legendTicks = d3.scaleLinear().domain(extent).ticks(6);
+        const legendAxis = d3.axisBottom(ledgendScale)
+            .tickSize(legendHeight)
+            .tickValues([0, ...legendTicks, extent[1]]);
+
+        d3.select('.legend').remove();
+
+        const legend_g = d3.select("svg").append("g")
+            .attr('class', 'legend')
+            .attr("transform", `translate(15, ${height - 25})`);
+
+        const defs = legend_g.append("defs");
+        const linearGradient = defs.append("linearGradient").attr("id", "myGradient");
+        linearGradient.selectAll("stop")
+            .data([0, ...legendTicks])
+            .enter().append("stop")
+            .attr("offset", f => ((f - extent[0]) / (extent[1] - extent[0]) * 100) + "%")
+            .attr("stop-color", f => colorScale(f));
+
+
+        legend_g.append("rect")
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#myGradient)");
+
+        legend_g.append("g")
+            .call(legendAxis)
+            .select(".domain").remove();
+    }
 
     const updateMap = (_status) => {
 
@@ -33,11 +70,15 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
         d3.selectAll('.district')
             .transition()
             .duration(500)
-            .attr("fill", feature => colorScale(feature[_status]))
+            .attr("fill", feature => colorScale(feature[_status]));
+
+        drawLegend(_status, colorScale);
+
     }
 
     useEffect(() => {
-        const svg = d3.select("svg");
+        d3.selectAll('svg').remove()
+        const svg = d3.select("#mapbox").append("svg").attr('height', height).attr('width', width);
 
         const min_val = d3.min(covid_data, d => d[status]);
         const max_val = d3.max(covid_data, d => d[status]);
@@ -64,10 +105,10 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
             .data(geojson.features)
             .join('path')
             .on('mouseenter', function () {
-                tooltip.style("opacity", "0.9")
+                tooltip.style("display", null)
             })
             .on('mouseleave', function () {
-                tooltip.style("opacity", "0")
+                tooltip.style("display", "none")
             })
             .on('mousemove', function(f) {
                 const xPos = d3.mouse(this)[0] - 15;
@@ -103,10 +144,11 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
             .attr("transform", function(f) { return "translate(" + pathBuilder.centroid(f) + ")"; })
             .text(f => f.properties.DISTRICT)
             .style("text-anchor", "middle")
-            .attr('font-size', f => fontSizeScale(f[status]))
             .attr('fill', f => fontColorScale(f[status]))
+            //.attr('font-size', f => fontSizeScale(f[status]))
 
-        const tooltip = d3.select(".map-tooltip");
+
+        const tooltip = d3.select(".map-tooltip").style('display', 'none');
 
         //geojson.features.forEach(function(d, i) {
         //    var c = projection(d.geometry.coordinates)
@@ -115,7 +157,9 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
             //labels.push({x: c[0], y: c[1], label: d.properties.name})
         //});
 
-    }, [])
+        drawLegend(status, colorScale)
+
+    }, [width])
 
     const toggleStatus = useCallback((_st) => {
         setStatus(_st);
@@ -125,7 +169,7 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
     return (
         <div>
             <div className={"mt-3 d-flex justify-content-between"}>
-                <div>
+                <div className={"header-buttons"}>
                     <button type="button" className={`btn ${status === 'Confirmed' ? "btn-primary" : "btn-default"}`} onClick={() => {toggleStatus('Confirmed')}}>Confirmed</button>
                     <button type="button" className={`btn ${status === 'Active' ? "btn-primary" : "btn-default"}`} onClick={() => {toggleStatus('Active')}}>Active</button>
                     <button type="button" className={`btn ${status === 'Recovered' ? "btn-primary" : "btn-default"}`} onClick={() => {toggleStatus('Recovered')}}>Recovered</button>
@@ -136,15 +180,18 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
                 </div>
             </div>
             <div id={"mapbox"} style={{width: '100%', height}}>
-                <div className={"map-tooltip"}>some</div>
+                <div className={"map-tooltip"}></div>
                 <svg width={width} height={height} />
             </div>
-            <div className={"d-flex justify-content-between align-items-end"} style={{position: 'absolute', bottom: 25, width: '95%'}}>
-                <div>
-                    <h4 style={{color: "#6f6f6f"}}>COVID19 Cases Visualization in Assam</h4>
-                    <small>Itech Computer - service@itechcom.net</small>
-                </div>
-                <div className="card" style={{width: "18rem"}}>
+
+            <div className={"map-title"}>
+                <small style={{color: "#afafaf"}}>Move your mouse above any place to view results</small>
+                <h4 style={{color: "#6f6f6f", margin: 0, padding: 0}}>COVID19 Cases Visualization in Assam</h4>
+                <small>Itech Computer - service@itechcom.net</small>
+            </div>
+
+            <div className={"right-card"}>
+                <div className="card">
                     <ul className="list-group list-group-flush">
                         <li className="list-group-item d-flex justify-content-between"><span>Confirmed</span><span>{aggregated.confirmed}</span></li>
                         <li className="list-group-item d-flex justify-content-between"><span>Active</span><span>{aggregated.active}</span></li>
@@ -153,7 +200,6 @@ const MapComponent = ({width, covid_data, aggregated, geojson}) => {
                     </ul>
                 </div>
             </div>
-
         </div>
     )
 }
@@ -164,7 +210,7 @@ export default withResizeDetector(({width}) => {
     const [geojson, setGeoJson] = useState(null);
 
     useEffect(() => {
-        fetch('/.netlify/functions/assam').then(response => response.json())
+        fetch(process.env.MAP_URL).then(response => response.json())
             .then(geodata => {
                 fetch('https://api.covid19india.org/state_district_wise.json').then(response => response.json())
                     .then(st_data => st_data.Assam.districtData)
