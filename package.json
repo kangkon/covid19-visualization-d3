@@ -17,6 +17,7 @@
     "prod": "npm run build; npm run build:lambda"
   },
   "dependencies": {
+    "bootstrap": "^4.5.0",
     "d3": "^5.16.0",
     "d3-geo": "^1.12.1",
     "elemental": "^0.6.1",
