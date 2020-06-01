@@ -164,7 +164,7 @@ export default withResizeDetector(({width}) => {
     const [geojson, setGeoJson] = useState(null);
 
     useEffect(() => {
-        fetch('/netlify/functions/assam').then(response => response.json())
+        fetch('/.netlify/functions/assam').then(response => response.json())
             .then(geodata => {
                 fetch('https://api.covid19india.org/state_district_wise.json').then(response => response.json())
                     .then(st_data => st_data.Assam.districtData)
