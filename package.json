@@ -21,7 +21,7 @@
     "d3": "^5.16.0",
     "d3-geo": "^1.12.1",
     "elemental": "^0.6.1",
-    "gatsby": "^2.21.37",
+    "gatsby": "^4.25.7",
     "gatsby-source-filesystem": "^2.3.8",
     "gatsby-transformer-json": "^2.4.3",
     "netlify-lambda": "^1.6.3",
